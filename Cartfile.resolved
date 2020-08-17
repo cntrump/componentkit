@@ -1,4 +1,4 @@
+github "cntrump/yoga" "973e2f7f1720e69cc6e6827030c7ff3770a254ff"
 github "erikdoe/ocmock" "v3.4.2"
-github "facebook/yoga" "1.14.0"
 github "jspahrsummers/xcconfigs" "0.9"
 github "uber/ios-snapshot-test-case" "4.0.0"

@@ -140,9 +140,9 @@ static bool CKYogaNodeCanUseCachedMeasurement(const YGMeasureMode widthMode,
 }
 
 static YGSize measureYGComponent(YGNodeRef node,
-                                  float width,
+                                  YGFloat width,
                                   YGMeasureMode widthMode,
-                                  float height,
+                                  YGFloat height,
                                   YGMeasureMode heightMode)
 {
   CKFlexboxChildCachedLayout *cachedLayout = (__bridge CKFlexboxChildCachedLayout *)YGNodeGetContext(node);
@@ -175,7 +175,7 @@ static YGSize measureYGComponent(YGNodeRef node,
   return {measuredWidth, measuredHeight};
 }
 
-static float computeBaseline(YGNodeRef node, const float width, const float height)
+static YGFloat computeBaseline(YGNodeRef node, const YGFloat width, const YGFloat height)
 {
   CKFlexboxChildCachedLayout *const cachedLayout = getCKFlexboxChildCachedLayoutFromYogaNode(node, width, height);
   if ([cachedLayout.componentLayout.extra objectForKey:kCKComponentLayoutExtraBaselineKey]) {
@@ -186,7 +186,7 @@ static float computeBaseline(YGNodeRef node, const float width, const float heig
   return height;
 }
 
-static float useHeightAsBaselineFunction(YGNodeRef node, const float width, const float height)
+static YGFloat useHeightAsBaselineFunction(YGNodeRef node, const YGFloat width, const YGFloat height)
 {
   return height;
 }
