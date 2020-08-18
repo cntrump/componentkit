@@ -35,8 +35,8 @@ const struct CKStackComponentLayoutExtraKeys CKStackComponentLayoutExtraKeys = {
 
 @property (nonatomic) CKComponent *component;
 @property (nonatomic) CKComponentLayout componentLayout;
-@property (nonatomic) float width;
-@property (nonatomic) float height;
+@property (nonatomic) CGFloat width;
+@property (nonatomic) CGFloat height;
 @property (nonatomic) YGMeasureMode widthMode;
 @property (nonatomic) YGMeasureMode heightMode;
 @property (nonatomic) CGSize parentSize;
@@ -88,12 +88,12 @@ template class std::vector<CKFlexboxComponentChild>;
   });
 }
 
-static float convertFloatToYogaRepresentation(const float& value) {
+static CGFloat convertFloatToYogaRepresentation(const float& value) {
   return isnan(value) || isinf(value) ? YGUndefined : value;
 }
 
-static float convertCGFloatToYogaRepresentation(const CGFloat& value) {
-  return isnan(value) || isinf(value) ? YGUndefined : static_cast<float>(value);
+static CGFloat convertCGFloatToYogaRepresentation(const CGFloat& value) {
+  return isnan(value) || isinf(value) ? YGUndefined : static_cast<CGFloat>(value);
 }
 
 static CGSize convertCGSizeToYogaRepresentation(const CGSize& size) {
@@ -107,12 +107,12 @@ static CKSizeRange convertCKSizeRangeToYogaRepresentation(const CKSizeRange& siz
   return range;
 }
 
-static float convertFloatToCKRepresentation(const float& value) {
+static CGFloat convertFloatToCKRepresentation(const float& value) {
   return YGFloatIsUndefined(value) ? INFINITY : value;
 }
 
 static CGFloat convertCGFloatToCKRepresentation(const CGFloat& value) {
-  return YGFloatIsUndefined(static_cast<float>(value)) ? INFINITY : value;
+  return YGFloatIsUndefined(static_cast<CGFloat>(value)) ? INFINITY : value;
 }
 
 static CGSize convertCGSizeToCKRepresentation(const CGSize& size) {
@@ -124,17 +124,17 @@ static CKSizeRange convertCKSizeRangeToCKRepresentation(const CKSizeRange& size)
 }
 
 static bool CKYogaNodeCanUseCachedMeasurement(const YGMeasureMode widthMode,
-                                   const float width,
+                                   const CGFloat width,
                                    const YGMeasureMode heightMode,
-                                   const float height,
+                                   const CGFloat height,
                                    const YGMeasureMode lastWidthMode,
-                                   const float lastWidth,
+                                   const CGFloat lastWidth,
                                    const YGMeasureMode lastHeightMode,
-                                   const float lastHeight,
-                                   const float lastComputedWidth,
-                                   const float lastComputedHeight,
-                                   const float marginRow,
-                                   const float marginColumn,
+                                   const CGFloat lastHeight,
+                                   const CGFloat lastComputedWidth,
+                                   const CGFloat lastComputedHeight,
+                                   const CGFloat marginRow,
+                                   const CGFloat marginColumn,
                                    const YGConfigRef config) {
   return YGNodeCanUseCachedMeasurement(widthMode, convertFloatToYogaRepresentation(width), heightMode, convertFloatToYogaRepresentation(height), lastWidthMode, convertFloatToYogaRepresentation(lastWidth), lastHeightMode, convertFloatToYogaRepresentation(lastHeight), convertFloatToYogaRepresentation(lastComputedWidth), convertFloatToYogaRepresentation(lastComputedHeight), convertFloatToYogaRepresentation(marginRow), convertFloatToYogaRepresentation(marginColumn), config);
 }
@@ -158,7 +158,7 @@ static YGSize measureYGComponent(YGNodeRef node,
   // ComponentKit and Yoga handle caching between calculations
   // We don't have any guarantees about when and how this will be called,
   // so we just cache the results to try to reuse them during final layout
-  if (!CKYogaNodeCanUseCachedMeasurement(widthMode, width, heightMode, height, cachedLayout.widthMode, cachedLayout.width, cachedLayout.heightMode, cachedLayout.height, static_cast<float>(cachedLayout.componentLayout.size.width), static_cast<float>(cachedLayout.componentLayout.size.height), 0, 0, ckYogaDefaultConfig())) {
+  if (!CKYogaNodeCanUseCachedMeasurement(widthMode, width, heightMode, height, cachedLayout.widthMode, cachedLayout.width, cachedLayout.heightMode, cachedLayout.height, static_cast<CGFloat>(cachedLayout.componentLayout.size.width), static_cast<CGFloat>(cachedLayout.componentLayout.size.height), 0, 0, ckYogaDefaultConfig())) {
     CKComponent *component = cachedLayout.component;
     CKComponentLayout componentLayout = CKComputeComponentLayout(component, convertCKSizeRangeToCKRepresentation(CKSizeRange(minSize, maxSize)), convertCGSizeToCKRepresentation(cachedLayout.parentSize));
     cachedLayout.componentLayout = componentLayout;
@@ -167,11 +167,11 @@ static YGSize measureYGComponent(YGNodeRef node,
     cachedLayout.widthMode = widthMode;
     cachedLayout.heightMode = heightMode;
   }
-  const float componentLayoutWidth = static_cast<float>(cachedLayout.componentLayout.size.width);
-  const float componentLayoutHeight = static_cast<float>(cachedLayout.componentLayout.size.height);
+  const CGFloat componentLayoutWidth = static_cast<CGFloat>(cachedLayout.componentLayout.size.width);
+  const CGFloat componentLayoutHeight = static_cast<CGFloat>(cachedLayout.componentLayout.size.height);
 
-  const float measuredWidth = convertFloatToYogaRepresentation(componentLayoutWidth);
-  const float measuredHeight = convertFloatToYogaRepresentation(componentLayoutHeight);
+  const CGFloat measuredWidth = convertFloatToYogaRepresentation(componentLayoutWidth);
+  const CGFloat measuredHeight = convertFloatToYogaRepresentation(componentLayoutHeight);
   return {measuredWidth, measuredHeight};
 }
 
@@ -191,11 +191,11 @@ static YGFloat useHeightAsBaselineFunction(YGNodeRef node, const YGFloat width, 
   return height;
 }
 
-static CKFlexboxChildCachedLayout* getCKFlexboxChildCachedLayoutFromYogaNode(YGNodeRef node, const float width, const float height)
+static CKFlexboxChildCachedLayout* getCKFlexboxChildCachedLayoutFromYogaNode(YGNodeRef node, const CGFloat width, const CGFloat height)
 {
   CKFlexboxChildCachedLayout *const cachedLayout = (__bridge CKFlexboxChildCachedLayout *)YGNodeGetContext(node);
 
-  if (!CKYogaNodeCanUseCachedMeasurement(YGMeasureModeExactly, width, YGMeasureModeExactly, height, cachedLayout.widthMode, cachedLayout.width, cachedLayout.heightMode, cachedLayout.height, static_cast<float>(cachedLayout.componentLayout.size.width), static_cast<float>(cachedLayout.componentLayout.size.height), 0, 0, ckYogaDefaultConfig())) {
+  if (!CKYogaNodeCanUseCachedMeasurement(YGMeasureModeExactly, width, YGMeasureModeExactly, height, cachedLayout.widthMode, cachedLayout.width, cachedLayout.heightMode, cachedLayout.height, static_cast<CGFloat>(cachedLayout.componentLayout.size.width), static_cast<CGFloat>(cachedLayout.componentLayout.size.height), 0, 0, ckYogaDefaultConfig())) {
     const CGSize fixedSize = {width, height};
     const CKComponentLayout componentLayout = CKComputeComponentLayout(cachedLayout.component, convertCKSizeRangeToCKRepresentation(CKSizeRange(fixedSize, fixedSize)), convertCGSizeToCKRepresentation(cachedLayout.parentSize));
     cachedLayout.componentLayout = componentLayout;
@@ -679,8 +679,8 @@ static void applyBorderToEdge(YGNodeRef node, YGEdge edge, CKFlexboxBorderDimens
             });
 
   std::vector<CKComponentLayoutChild> childrenLayout(childCount);
-  const float width = convertFloatToCKRepresentation(YGNodeLayoutGetWidth(layoutNode));
-  const float height = convertFloatToCKRepresentation(YGNodeLayoutGetHeight(layoutNode));
+  const CGFloat width = convertFloatToCKRepresentation(YGNodeLayoutGetWidth(layoutNode));
+  const CGFloat height = convertFloatToCKRepresentation(YGNodeLayoutGetHeight(layoutNode));
   const CGSize size = {width, height};
   for (NSUInteger i = 0; i < childCount; i++) {
     // Get the layout for every child
@@ -722,7 +722,7 @@ static void applyBorderToEdge(YGNodeRef node, YGEdge edge, CKFlexboxBorderDimens
 - (BOOL)canReuseCachedLayout:(const CKFlexboxChildCachedLayout * const)childCachedLayout
        forChildWithExactSize:(const CGSize)childSize
 {
-  return CKYogaNodeCanUseCachedMeasurement(YGMeasureModeExactly, static_cast<float>(childSize.width), YGMeasureModeExactly, static_cast<float>(childSize.height), childCachedLayout.widthMode, childCachedLayout.width, childCachedLayout.heightMode, childCachedLayout.height, static_cast<float>(childCachedLayout.componentLayout.size.width), static_cast<float>(childCachedLayout.componentLayout.size.height), 0, 0, ckYogaDefaultConfig()) ||
+  return CKYogaNodeCanUseCachedMeasurement(YGMeasureModeExactly, static_cast<CGFloat>(childSize.width), YGMeasureModeExactly, static_cast<CGFloat>(childSize.height), childCachedLayout.widthMode, childCachedLayout.width, childCachedLayout.heightMode, childCachedLayout.height, static_cast<CGFloat>(childCachedLayout.componentLayout.size.width), static_cast<CGFloat>(childCachedLayout.componentLayout.size.height), 0, 0, ckYogaDefaultConfig()) ||
     childSize.width == 0 ||
     childSize.height == 0;
 }

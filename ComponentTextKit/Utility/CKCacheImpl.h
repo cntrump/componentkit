@@ -241,7 +241,7 @@ namespace CK {
         return;
       }
 
-      const NSUInteger targetCost = floorf((float)_maxCost * (1 - _compactionFactor));
+      const NSUInteger targetCost = floor((CGFloat)_maxCost * (1 - _compactionFactor));
       _eraseItemsWithCost(currentCost - targetCost);
     }
 
